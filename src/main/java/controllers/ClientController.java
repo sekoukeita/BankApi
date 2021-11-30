@@ -26,9 +26,15 @@ public class ClientController {
         // it returns only the clientName, what is needed to use the one argument constructor with clientName
         // because the clientId is default in the database.
         Client client = ctx.bodyAsClass(Client.class);
-        clientService.createClient(client);
-        ctx.status(201);
-        ctx.result("The new client named " + client.getClientName() + " has been successfully created in the database!");
+        if(client.getClientName().length() > 20){
+            ctx.status(404);
+            ctx.result("The client has not been created. The name length is over the 20 characters allowed.");
+        }
+        else{
+            clientService.createClient(client);
+            ctx.status(201);
+            ctx.result("The new client named " + client.getClientName() + " has been successfully created in the database!");
+        }
     }
 
     // GET /clients => gets all clients return 200
@@ -37,10 +43,10 @@ public class ClientController {
     }
 
     // GET /clients/10 => get client with id of 10 return 404 if no such client exist
-    public void getClient(Context ctx) throws JsonProcessingException {
+    public void getClient(Context ctx) {
         Integer clientId = Integer.parseInt(ctx.pathParam("cId")); // get the id to from the path parameter entered into the url
 
-        if(getClientIdsList().contains(clientId)){
+        if(clientService.getClientIdsList().contains(clientId)){
             ctx.json(clientService.getClient(clientId)); //if the clientId is inside the ids list, get the client.
         }
         else{
@@ -54,7 +60,7 @@ public class ClientController {
         Client client = ctx.bodyAsClass(Client.class); // get the client new name from the json in the body
         Integer clientId = Integer.parseInt(ctx.pathParam("cId")); // get the client id from the path parameter
 
-        if(getClientIdsList().contains(clientId)){
+        if(clientService.getClientIdsList().contains(clientId)){
             clientService.updateClient(clientId, client.getClientName()); //if the clientId is inside the ids list, update the client name.
             ctx.result("The name of the client with id " + clientId + " has been successfully updated to: " + client.getClientName());
         }
@@ -68,7 +74,7 @@ public class ClientController {
     public void deleteClient(Context ctx){
         Integer clientId = Integer.parseInt(ctx.pathParam("cId")); // get the client id from the path parameter
 
-        if(getClientIdsList().contains(clientId)){
+        if(clientService.getClientIdsList().contains(clientId)){
             clientService.deleteClient(clientId); //if the clientId is inside the ids list, delete the client name.
             ctx.status(205);
             ctx.result("The client with id " + clientId + " (and its accounts if any) have been successfully deleted from the database!");
@@ -77,18 +83,5 @@ public class ClientController {
             ctx.status(404); // else return the status code 404
             ctx.result("The client with id " + clientId + " does not exist in the database!");
         }
-    }
-
-                                    // HELPER METHODS
-
-    // Returns the list of clientIds in the database.
-    public List<Integer> getClientIdsList(){
-        List<Client> clients = clientService.getClients(); // get the list of clients in the database.
-        List<Integer> clientIds = new ArrayList<>(); // create an empty ArrayList of ids.
-
-        for(Client client : clients){
-            clientIds.add(client.getClientId()); // loop through clients' list and add each id to the ids' list.
-        }
-        return clientIds;
     }
 }

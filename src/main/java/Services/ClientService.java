@@ -4,6 +4,7 @@ import daos.ClientDao;
 import daos.ClientDaoImpl;
 import models.Client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientService {
@@ -16,34 +17,65 @@ public class ClientService {
         this.clientDao = new ClientDaoImpl();
     }
 
-                // MEMBERS METHODS TO DEFINE THE BUSINESS LOGIC
+    public ClientService(ClientDao clientDao) {
+        this.clientDao = clientDao;
+    }
+
+    // MEMBERS METHODS TO DEFINE THE BUSINESS LOGIC
     public List<Client> getClients(){
-        System.out.println("The list of clients has successfully been returned.");
         return clientDao.getClients();
     }
 
     public Client getClient(Integer clientId){
-        System.out.println("The client has successfully been returned.");
-        return clientDao.getClient(clientId);
+        if(getClientIdsList().contains(clientId)){ // if the client exists in the database.
+            return clientDao.getClient(clientId);
+        }
+        else{
+            return null;
+        }
     }
 
-    public void createClient(Client client){
-        clientDao.createClient(client);
-        System.out.println("The client has successfully been created in the database.");
+    public Boolean createClient(Client client){
+        if(client.getClientName().length() > 20){ // if the name of the client to create has more than 20 characters, don't create it.
+            return false;
+        }
+        else{
+            clientDao.createClient(client);
+            return true;
+        }
     }
 
-    public void updateClient(Integer clientId, String clientNewName){
-        if (clientNewName.length() > 20){
-            System.out.printf("This name length is %s characters. It should be less or equal to 20 characters.", clientNewName.length());
+    public Boolean updateClient(Integer clientId, String clientNewName){
+        // if the client does not exist in the database or if its name has more than 20 characters.
+        if(!getClientIdsList().contains(clientId) || clientNewName.length() > 20){
+            return false;
         }
         else{
             clientDao.updateClient(clientId, clientNewName);
-            System.out.printf("The name of the client with id %s has been replaced by %s.", clientId, clientNewName);
+            return true;
         }
     }
 
-    public void deleteClient(Integer clientId){
-        clientDao.deleteClient(clientId);
-        System.out.printf("The client with id %s has been successfully removed from the database", clientId);
+    public Boolean deleteClient(Integer clientId){
+        if(getClientIdsList().contains(clientId)){ // if the client exists in the database.
+            clientDao.deleteClient(clientId);
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+                            // HELPER METHODS
+
+    // Returns the list of clientIds in the database.
+    public List<Integer> getClientIdsList(){
+        List<Client> clients = getClients(); // get the list of clients in the database.
+        List<Integer> clientIds = new ArrayList<>(); // create an empty ArrayList of ids.
+
+        for(Client client : clients){
+            clientIds.add(client.getClientId()); // loop through clients' list and add each id to the ids' list.
+        }
+        return clientIds;
     }
 }

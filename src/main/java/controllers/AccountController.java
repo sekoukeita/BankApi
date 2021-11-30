@@ -1,6 +1,7 @@
 package controllers;
 
 import Services.AccountService;
+import Services.ClientService;
 import io.javalin.http.Context;
 import models.Account;
 
@@ -20,13 +21,13 @@ public class AccountController {
 
     //HANDLER IMPLEMENTATIONS
 
-    ClientController clientController = new ClientController(); // create the object clientController to call the helper method.
+    ClientService clientService = new ClientService(); // create the object clientController to call the helper method.
 
     // POST /clients/5/accounts =>creates a new account for client with the id of 5 return a 201 status code
     public void createAccount(Context ctx) {
         Integer clientId = Integer.parseInt(ctx.pathParam("cId"));
 
-        if (clientController.getClientIdsList().contains(clientId)) { // The method getIdsList return the list of client ids in the database.
+        if (clientService.getClientIdsList().contains(clientId)) { // The method getIdsList return the list of client ids in the database.
             accountService.createAccount(clientId);
             ctx.status(201);
             ctx.result("An account has been successfully created for the client with id " + clientId + " in the database!");
@@ -44,7 +45,7 @@ public class AccountController {
      * */
     public void getClientAccounts(Context ctx) {
         Integer clientId = Integer.parseInt(ctx.pathParam("cId"));
-        if (!(clientController.getClientIdsList().contains(clientId))) {
+        if (!(clientService.getClientIdsList().contains(clientId))) {
             ctx.status(404);
             ctx.result("The client with id " + clientId + " does not exists in the database.");
             return;
@@ -68,7 +69,7 @@ public class AccountController {
         Integer clientId = Integer.parseInt(ctx.pathParam("cId"));
         Integer accountId = Integer.parseInt(ctx.pathParam("aId"));
 
-        if (!clientController.getClientIdsList().contains(clientId)) {
+        if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
         } else if (!getAccountIdsList(clientId).contains(accountId)) {
@@ -86,7 +87,7 @@ public class AccountController {
         Integer clientId = Integer.parseInt(ctx.pathParam("cId")); // get the client id from the path parameter
         Integer accountId = Integer.parseInt(ctx.pathParam("aId")); // get the account id from the path parameter
 
-        if (!clientController.getClientIdsList().contains(clientId)) {
+        if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
         } else if (!getAccountIdsList(clientId).contains(accountId)) {
@@ -105,7 +106,7 @@ public class AccountController {
         Integer clientId = Integer.parseInt(ctx.pathParam("cId")); // get the client id from the path parameter
         Integer accountId = Integer.parseInt(ctx.pathParam("aId")); // get the account id from the path parameter
 
-        if (!clientController.getClientIdsList().contains(clientId)) {
+        if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
         } else if (!getAccountIdsList(clientId).contains(accountId)) {
@@ -125,7 +126,7 @@ public class AccountController {
         Integer clientId = Integer.parseInt(ctx.pathParam("cId")); // get the client id from the path parameter
         Integer accountId = Integer.parseInt(ctx.pathParam("aId")); // get the account id from the path parameter
 
-        if (!clientController.getClientIdsList().contains(clientId)) {
+        if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
         } else if (!getAccountIdsList(clientId).contains(accountId)) {
@@ -161,7 +162,7 @@ public class AccountController {
         Integer accountFromId = Integer.parseInt(ctx.pathParam("aId")); // get the account from id from the path parameter
         Integer accountToId = Integer.parseInt(ctx.pathParam("aId2")); // get the account to id from the path parameter
 
-        if (!clientController.getClientIdsList().contains(clientId)) {
+        if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
         } else if (!getAccountIdsList(clientId).contains(accountFromId)) {
