@@ -1,6 +1,7 @@
 package daos;
 
 import models.Client;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +13,9 @@ public class ClientDaoImpl implements ClientDao{
     String url;
     String username;
     String password;
+
+    // create the logger object to log events in the file project_0.log
+    Logger logger = Logger.getLogger(ClientDaoImpl.class);
 
                  // CONSTRUCTORS
     public ClientDaoImpl() {
@@ -39,7 +43,8 @@ public class ClientDaoImpl implements ClientDao{
             }
         }
         catch(SQLException e){
-            e.printStackTrace();
+           // e.printStackTrace();
+            logger.error(e); // implement logging for sql exceptions
         }
         return clients;
     }
@@ -58,7 +63,7 @@ public class ClientDaoImpl implements ClientDao{
             }
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
         return client;
     }
@@ -72,7 +77,7 @@ public class ClientDaoImpl implements ClientDao{
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -86,7 +91,7 @@ public class ClientDaoImpl implements ClientDao{
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -101,7 +106,7 @@ public class ClientDaoImpl implements ClientDao{
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 }

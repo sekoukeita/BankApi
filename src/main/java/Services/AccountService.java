@@ -2,60 +2,161 @@ package Services;
 
 import daos.AccountDao;
 import daos.AccountDaoImpl;
+import daos.ClientDao;
 import models.Account;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccountService {
 
                 // MEMBER VARIABLES
-    // References the AccountDao
-    AccountDao accountDao;
+    AccountDao accountDao; // References the AccountDao
+    //ClientDao clientDao; // References the ClientDao
 
                 // CONSTRUCTORS
     public AccountService() {
         this.accountDao = new AccountDaoImpl();
     }
 
-                // MEMBERS METHODS TO DEFINE THE BUSINESS LOGIC
-    public List<Account> getAccounts(){
-        System.out.println("The list of all accounts of the database has been successfully returned.");
-        return accountDao.getAccounts();
+    public AccountService(AccountDao accountDao) {
+        this.accountDao = accountDao;
     }
 
+    /*        // added to use in unit testing
+    public AccountService(ClientDao clientDao) {
+        this.clientDao = clientDao;
+
+    }*/
+
+    // MEMBERS METHODS TO DEFINE THE BUSINESS LOGIC
+
+    ClientService clientService = new ClientService(); // create the object clientController to call the helper method.
+
     public List<Account> getClientAccounts(Integer clientId){
-        System.out.printf("The list of all accounts for the client with id %s has been successfully returned.", clientId);
-        return accountDao.getClientAccounts(clientId);
+
+        if (!(getClientIdsListInAccount().contains(clientId))) {
+            return new ArrayList<Account>(); //empty list
+        }
+        else{ // if client id in listIds and not query parameters found
+            return accountDao.getClientAccounts(clientId);
+        }
     }
 
     public List<Account> getClientAccounts(Integer clientId, Double minBalance, Double maxBalance){
-        System.out.printf("The list of accounts for the client with id %s that have a balance value between $%s and $%s has been returned.",
-                clientId, minBalance, maxBalance);
-        return accountDao.getClientAccounts(clientId, minBalance, maxBalance);
-    }
 
+        if (!(getClientIdsListInAccount().contains(clientId))) {
+            return new ArrayList<Account>(); //empty list
+        }
+        else{ // if client id in listIds and  query parameters found
+            return accountDao.getClientAccounts(clientId, minBalance, maxBalance);
+        }
+    }
 
     public Account getClientAccount(Integer clientId, Integer accountId){
-        System.out.printf("The account with id %s for the client with id %s has been successfully returned.", clientId, accountId);
-        return accountDao.getClientAccount(clientId, accountId);
+        if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountId)){
+            return null;
+        }
+        else { // if client id in listIds and account id in list in accountIds
+            return accountDao.getClientAccount(clientId, accountId);
+        }
     }
 
-    public void createAccount(Integer clientId){
-        accountDao.createAccount(clientId);
-        System.out.printf("An account has been successfully created for the client with id %s", clientId);
+    public Boolean createAccount(Integer clientId){
+        if (clientService.getClientIdsList().contains(clientId)) { // if client id in listIds
+            accountDao.createAccount(clientId);
+            return true;
+        } else {
+           return false;
+        }
     }
 
-    public void updateAccount(Integer accountId, Integer clientId, String category,
+    public Boolean updateAccount(Integer accountId, Integer clientId, String category,
                               Double balance, Double deposit, Double withdraw, Double transfer, Boolean isActive){
-        accountDao.updateAccount(accountId, clientId, category, balance, deposit, withdraw, transfer, isActive);
-        System.out.printf("The account with id %s has been successfully updated with the following values:\n" +
-                "clientId: %s\n" +
-                "category: %s\n" +
-                "balance: %s\n" +
-                "deposit: %s\n" +
-                "withdraw: %s\n" +
-                "transfer: %s\n" +
-                "isActive: %s\n", accountId, clientId, category, balance, deposit, withdraw, transfer, isActive);
+
+        if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountId)) {
+            return false;
+        }
+        else { // client id in listIds and account id in accountIds
+            accountDao.updateAccount(accountId, clientId, category, balance, deposit, withdraw, transfer, isActive);
+            return true;
+        }
+    }
+
+    public Boolean updateAccountBalanceByDeposit(Integer clientId, Integer accountId, Double deposit){
+        if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountId)){
+            return false;
+        }
+        else{ // client id in listIds and account id in accountIds
+            accountDao.updateAccountBalanceByDeposit(clientId, accountId, deposit);
+            return true;
+        }
+    }
+
+    public Boolean updateAccountBalanceByWithdraw(Integer clientId, Integer accountId, Double withdraw){
+        /*if (!getAccountIdsList().contains(accountId) ||
+                !(getClientAccount(clientId, accountId).getBalance() < withdraw)){
+            return false;
+        }
+        else{ // client id in listIds and account id in accountIds and balance >= withdraw
+            accountDao.updateAccountBalanceByWithdraw(clientId, accountId, withdraw);
+            return true;
+        }*/
+        accountDao.updateAccountBalanceByWithdraw(clientId, accountId, withdraw);
+        return true;
+
+    }
+
+    public Boolean updateAccountsBalanceByTransfer(Integer clientId, Integer accountFromId, Integer accountToId, Double transferAmount){
+        if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountFromId) ||
+                !getAccountIdsList().contains(accountToId) ||
+                !(getClientAccount(clientId, accountFromId).getBalance() < transferAmount) ) {
+            return false;
+        }
+        else{
+            accountDao.updateAccountsBalanceByTransfer(clientId, accountFromId, accountToId, transferAmount);
+            return true;
+        }
+    }
+
+    public Boolean deleteAccount(Integer clientId, Integer accountId){
+        if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountId)){
+            return false;
+        }
+        else { // if client id in listIds and account id in list in accountIds
+            accountDao.deleteAccount(clientId, accountId);
+            return true;
+        }
+    }
+
+                        // HELPER METHODS
+
+    // Returns the list of accountIds for the client.
+    public List<Integer> getAccountIdsList(){
+        List<Account> accounts = getAccounts(); // get the list of all accounts.
+        List<Integer> accountIds = new ArrayList<>(); // create an empty ArrayList of ids.
+
+        for(Account account : accounts){
+            accountIds.add(account.getAccountId()); // loop through accounts list and add each id to the ids' list.
+        }
+        return accountIds;
+    }
+
+    public List<Integer> getClientIdsListInAccount(){
+        List<Account> accounts = getAccounts(); // get the list of all accounts.
+        List<Integer> clientIdsInAccount = new ArrayList<>(); // create an empty ArrayList of ids.
+
+        for(Account account : accounts){
+            clientIdsInAccount.add(account.getClientId()); // loop through accounts' list and add each client id to the ids' list.
+        }
+        return clientIdsInAccount;
+    }
+
+
+                         // NON USED METHODS
+
+    public List<Account> getAccounts(){
+        return accountDao.getAccounts();
     }
 
     // The categories allowed are Checking and Saving
@@ -70,47 +171,10 @@ public class AccountService {
         }
     }
 
-    public void updateAccountBalanceByDeposit(Integer clientId, Integer accountId, Double deposit){
-        accountDao.updateAccountBalanceByDeposit(clientId, accountId, deposit);
-        System.out.printf("The account id %s for the client id %s balance has been successful increased by $%s",
-                accountId, clientId, deposit);
-    }
-
-    public void updateAccountBalanceByWithdraw(Integer clientId, Integer accountId, Double withdraw){
-        accountDao.updateAccountBalanceByWithdraw(clientId, accountId, withdraw);
-        System.out.printf("The account id %s for the client id %s balance has been successful decreased by $%s",
-                accountId, clientId, withdraw);
-    }
-
     public void updateAccountStatus(Integer clientId, Integer accountId, Boolean isActive){
         accountDao.updateAccountStatus(clientId, accountId, isActive);
         System.out.printf("The account id %s for the client id %s isActive propriety has been updated to %s",
                 accountId, clientId, isActive);
     }
-
-    public void updateAccountsBalanceByTransfer(Integer clientId, Integer accountFromId, Integer accountToId, Double transferAmount){
-        accountDao.updateAccountsBalanceByTransfer(clientId, accountFromId, accountToId, transferAmount);
-        System.out.printf("The amount of %s has been successfully transferred from the account id %s to the account id %s of the client id %s",
-                transferAmount, accountFromId, accountToId, clientId);
-    }
-
-    public void deleteAccount(Integer clientId, Integer accountId){
-        accountDao.deleteAccount(clientId, accountId);
-        System.out.printf("The account id %s for the client id %s has been successfully removed.", accountId, clientId);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

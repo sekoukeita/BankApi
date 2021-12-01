@@ -3,6 +3,7 @@ import controllers.AccountController;
 import daos.AccountDao;
 import daos.AccountDaoImpl;
 import models.Account;
+import util.H2Util;
 
 import java.util.List;
 
@@ -34,10 +35,11 @@ public class Main {
         //cs.deleteClient(9);
 
                   //AccountService Test
-        AccountDao ad = new AccountDaoImpl();
-        AccountService as = new AccountService();
-        AccountController ac = new AccountController();
-
+        //AccountDao ad = new AccountDaoImpl();
+        //AccountService as = new AccountService();
+       AccountController ac = new AccountController();
+           // List<Account> accounts = as.getClientAccounts(2);
+        //System.out.println(accounts);
 
         /*List<Account> accounts = as.getAccounts();
         System.out.println(accounts);*/
@@ -53,7 +55,8 @@ public class Main {
 
         //as.createAccount(1);
 
-        //as.updateAccount(9,2,"Saving",275.0,0.0,0.0,0.0,false);
+        //ac.updateAccountBalanceByWithdraw(1,7,500.0);
+
 
        //as.updateAccountCategory(1,1,"Checking");
 
@@ -69,6 +72,9 @@ public class Main {
 
        // List<Account> accounts = ad.getClientAccounts(1, 1000.0, 4000.0)
         // System.out.println(accounts);
+
+        //H2Util.createTable();
+        //H2Util.dropTable();
 
 
 

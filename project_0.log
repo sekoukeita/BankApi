@@ -1,0 +1,38 @@
+2021-12-01 02:23:49 ERROR ClientDaoImpl:160 - org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "ACCOUNT_TRANSFER" not found; SQL statement:
+UPDATE accounts 
+SET client_id = ?,
+	account_category = ?,
+	account_balance = ?,
+	account_deposit = ?,
+	account_withdraw = ?,
+	account_transfer = ?,
+	account_is_active = ? 
+WHERE account_id = ?; [42122-200]
+2021-12-01 09:48:31 ERROR ClientDaoImpl:160 - org.postgresql.util.PSQLException: ERROR: column "account_transfer" of relation "accounts" does not exist
+  Position: 133
+2021-12-01 09:49:45 ERROR ClientDaoImpl:160 - org.postgresql.util.PSQLException: ERROR: column "account_transfer" of relation "accounts" does not exist
+  Position: 133
+2021-12-01 09:52:08 ERROR ClientDaoImpl:160 - org.postgresql.util.PSQLException: ERROR: column "account_transfer" of relation "accounts" does not exist
+  Position: 133
+2021-12-01 09:55:22 ERROR ClientDaoImpl:160 - org.postgresql.util.PSQLException: ERROR: column "account_transfer" of relation "accounts" does not exist
+  Position: 133
+2021-12-01 10:08:18 ERROR ClientDaoImpl:160 - org.postgresql.util.PSQLException: ERROR: column "account_transfer" of relation "accounts" does not exist
+  Position: 133
+2021-12-01 10:11:31 ERROR ClientDaoImpl:160 - org.postgresql.util.PSQLException: ERROR: column "account_transfer" of relation "accounts" does not exist
+  Position: 133
+2021-12-01 10:18:37 ERROR ClientDaoImpl:160 - org.postgresql.util.PSQLException: ERROR: column "account_is_active" of relation "accounts" does not exist
+  Position: 157
+2021-12-01 10:18:49 ERROR ClientDaoImpl:160 - org.postgresql.util.PSQLException: ERROR: column "account_is_active" of relation "accounts" does not exist
+  Position: 157
+2021-12-01 10:19:12 ERROR ClientDaoImpl:160 - org.postgresql.util.PSQLException: ERROR: column "account_is_active" of relation "accounts" does not exist
+  Position: 157
+2021-12-01 12:31:08 ERROR ClientDaoImpl:160 - org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "ACCOUNT_TRANSFER" not found; SQL statement:
+UPDATE accounts 
+SET client_id = ?,
+	account_category = ?,
+	account_balance = ?,
+	account_deposit = ?,
+	account_withdraw = ?,
+	account_transfer = ?,
+	account_is_active = ? 
+WHERE account_id = ?; [42122-200]

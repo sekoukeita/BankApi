@@ -50,6 +50,11 @@ public class AccountController {
             ctx.result("The client with id " + clientId + " does not exists in the database.");
             return;
         }
+        if (!(accountService.getClientIdsListInAccount().contains(clientId))) {
+            ctx.status(404);
+            ctx.result("The client with id " + clientId + " does not have any account in the database.");
+            return;
+        }
 
         if ((ctx.queryParam("amountLessThan") != null) && (ctx.queryParam("amountGreaterThan") != null)) {
             Double minBalance = Double.parseDouble(ctx.queryParam("amountGreaterThan"));
@@ -72,7 +77,7 @@ public class AccountController {
         if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
-        } else if (!getAccountIdsList(clientId).contains(accountId)) {
+        } else if (!accountService.getAccountIdsList().contains(accountId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not have any account with id " + accountId);
         }
@@ -90,7 +95,7 @@ public class AccountController {
         if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
-        } else if (!getAccountIdsList(clientId).contains(accountId)) {
+        } else if (!accountService.getAccountIdsList().contains(accountId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not have any account with id " + accountId);
         }
@@ -109,7 +114,7 @@ public class AccountController {
         if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
-        } else if (!getAccountIdsList(clientId).contains(accountId)) {
+        } else if (!accountService.getAccountIdsList().contains(accountId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not have any account with id " + accountId);
         }
@@ -129,7 +134,7 @@ public class AccountController {
         if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
-        } else if (!getAccountIdsList(clientId).contains(accountId)) {
+        } else if (!accountService.getAccountIdsList().contains(accountId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not have any account with id " + accountId);
         }
@@ -146,7 +151,7 @@ public class AccountController {
                             accountService.getClientAccount(clientId, accountId).getBalance());
                 }
                 else{
-                    accountService.updateAccountBalanceByWithdraw(clientId, accountId, account.getWithdraw());
+                    accountService.updateAccountBalanceByWithdraw(clientId, accountId, account.getDeposit() );
                     ctx.result("The account with id " + accountId + " for the client with id " + clientId +
                             " balance has been successfully decreased by $" + account.getWithdraw());
                 }
@@ -165,10 +170,10 @@ public class AccountController {
         if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
-        } else if (!getAccountIdsList(clientId).contains(accountFromId)) {
+        } else if (!accountService.getAccountIdsList().contains(accountFromId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not have any account with id " + accountFromId);
-        } else if(!getAccountIdsList(clientId).contains(accountToId)){
+        } else if(!accountService.getAccountIdsList().contains(accountToId)){
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not have any account with id " + accountToId);
         }else if(accountService.getClientAccount(clientId, accountFromId).getBalance() < account.getTransfer()){
@@ -182,19 +187,6 @@ public class AccountController {
             ctx.result("The amount of $" + account.getTransfer() + " has been successfully transferred from the account with id " +
                     accountFromId + " to the account with id " + accountToId);
         }
-    }
-
-                            // HELPER METHODS
-
-    // Returns the list of accountIds for the client.
-    public List<Integer> getAccountIdsList(Integer clientId){
-        List<Account> accounts = accountService.getClientAccounts(clientId); // get the list of accounts for the client.
-        List<Integer> accountIds = new ArrayList<>(); // create an empty ArrayList of ids.
-
-        for(Account account : accounts){
-            accountIds.add(account.getAccountId()); // loop through clients' list and add each id to the ids' list.
-        }
-        return accountIds;
     }
 }
 

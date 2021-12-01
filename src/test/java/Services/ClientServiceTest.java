@@ -16,14 +16,10 @@ class ClientServiceTest {
            // MEMBER VARIABLES
     ClientDao clientDao = Mockito.mock(ClientDao.class);
     ClientService clientService;
-    // spy the object clientService2 to call and mock only internal methods of the main method we are testing.
-    ClientService clientService2 = Mockito.spy(ClientService.class);
-
 
           // CONSTRUCTORS
     public ClientServiceTest() {
         this.clientService = new ClientService(clientDao);
-        this.clientService2 = new ClientService(clientDao);
     }
 
     @Test
@@ -53,12 +49,8 @@ class ClientServiceTest {
 
         Client expectedResult = clients.get(0);
 
-        /*
-        * The Dao is totally mocked. getClients() cannot access the daoImpl to return the expected result.
-        * We use Mockito.spy to mock getClients() and make it return the result we want to test our method
-        * since getClients is a helper method to our getClient method.
-        * */
-        Mockito.when(clientService2.getClients()).thenReturn(clients);
+        //Since clientDao object is mocked and clientService references this dao object, clientService can also be mocked.
+        Mockito.when(clientService.getClients()).thenReturn(clients);
         Mockito.when(clientDao.getClient(expectedResult.getClientId())).thenReturn(expectedResult);
 
         //Act
@@ -77,10 +69,10 @@ class ClientServiceTest {
         clients.add(new Client(3, "Omega"));
 
         // client with id out of the list of ids
-        Client client = new Client(4, "Delta");
+        Client client = new Client(1, "Delta");
 
-        Mockito.when(clientService2.getClients()).thenReturn(clients);
-        Mockito.when(clientDao.getClient(client.getClientId())).thenReturn(client);
+        Mockito.when(clientService.getClients()).thenReturn(clients);
+        //Mockito.when(clientDao.getClient(client.getClientId())).thenReturn(client);
 
         //Act
         Client actualResult = clientService.getClient(client.getClientId());
@@ -125,8 +117,7 @@ class ClientServiceTest {
 
         Client client = clients.get(0);
 
-        Mockito.when(clientService2.getClients()).thenReturn(clients);
-        Mockito.when(clientDao.getClient(client.getClientId())).thenReturn(client);
+        Mockito.when(clientService.getClients()).thenReturn(clients);
 
         //Act
         Boolean actualResult = clientService.updateClient(client.getClientId(), client.getClientName());
@@ -146,8 +137,7 @@ class ClientServiceTest {
         // Either the client id is not in the listIds or the length of the client name is over 20 or both.
         Client client = clients.get(0);
 
-        Mockito.when(clientService2.getClients()).thenReturn(clients);
-        Mockito.when(clientDao.getClient(client.getClientId())).thenReturn(client);
+        Mockito.when(clientService.getClients()).thenReturn(clients);
 
         //Act
         Boolean actualResult = clientService.updateClient(client.getClientId(), client.getClientName());
@@ -166,8 +156,7 @@ class ClientServiceTest {
 
         Client client = clients.get(0);
 
-        Mockito.when(clientService2.getClients()).thenReturn(clients);
-        Mockito.when(clientDao.getClient(client.getClientId())).thenReturn(client);
+        Mockito.when(clientService.getClients()).thenReturn(clients);
 
         //Act
         Boolean actualResult = clientService.deleteClient(client.getClientId());
@@ -186,8 +175,7 @@ class ClientServiceTest {
 
         Client client = new Client(5, "Delta");
 
-        Mockito.when(clientService2.getClients()).thenReturn(clients);
-        Mockito.when(clientDao.getClient(client.getClientId())).thenReturn(client);
+        Mockito.when(clientService.getClients()).thenReturn(clients);
 
         //Act
         Boolean actualResult = clientService.deleteClient(client.getClientId());

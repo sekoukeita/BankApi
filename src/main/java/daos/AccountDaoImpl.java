@@ -1,6 +1,7 @@
 package daos;
 
 import models.Account;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ public class AccountDaoImpl implements AccountDao{
     String url;
     String username;
     String password;
+
+    Logger logger = Logger.getLogger(ClientDaoImpl.class);
 
                 // CONSTRUCTORS
     public AccountDaoImpl() {
@@ -42,7 +45,7 @@ public class AccountDaoImpl implements AccountDao{
             }
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
         return accounts;
     }
@@ -63,7 +66,7 @@ public class AccountDaoImpl implements AccountDao{
             }
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
         return accounts;
     }
@@ -87,7 +90,7 @@ public class AccountDaoImpl implements AccountDao{
             }
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
         return accounts;
     }
@@ -109,7 +112,7 @@ public class AccountDaoImpl implements AccountDao{
             }
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
         return account;
     }
@@ -118,13 +121,13 @@ public class AccountDaoImpl implements AccountDao{
     public void createAccount(Integer clientId) {
         try(Connection conn = DriverManager.getConnection(url, username, password)){
             // On the database side, the sql statement needs only the client id. The rest are default.
-            String sql = "INSERT INTO accounts VALUES (DEFAULT, ?);";
+            String sql = "INSERT INTO accounts VALUES (DEFAULT, ?, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT);";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, clientId);
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -154,7 +157,7 @@ public class AccountDaoImpl implements AccountDao{
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -170,7 +173,7 @@ public class AccountDaoImpl implements AccountDao{
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -200,7 +203,7 @@ public class AccountDaoImpl implements AccountDao{
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -229,7 +232,7 @@ public class AccountDaoImpl implements AccountDao{
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -245,7 +248,7 @@ public class AccountDaoImpl implements AccountDao{
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -262,7 +265,7 @@ public class AccountDaoImpl implements AccountDao{
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
 
         updateAccountBalanceByWithdraw(clientId, accountFromId, transferAmount); // For the account from
@@ -280,7 +283,7 @@ public class AccountDaoImpl implements AccountDao{
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 }
