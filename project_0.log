@@ -36,3 +36,33 @@ SET client_id = ?,
 	account_transfer = ?,
 	account_is_active = ? 
 WHERE account_id = ?; [42122-200]
+2021-12-01 16:52:02 ERROR ClientDaoImpl:160 - org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "ACCOUNT_TRANSFER" not found; SQL statement:
+UPDATE accounts 
+SET client_id = ?,
+	account_category = ?,
+	account_balance = ?,
+	account_deposit = ?,
+	account_withdraw = ?,
+	account_transfer = ?,
+	account_is_active = ? 
+WHERE account_id = ?; [42122-200]
+2021-12-01 16:53:08 ERROR ClientDaoImpl:160 - org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "ACCOUNT_TRANSFER" not found; SQL statement:
+UPDATE accounts 
+SET client_id = ?,
+	account_category = ?,
+	account_balance = ?,
+	account_deposit = ?,
+	account_withdraw = ?,
+	account_transfer = ?,
+	account_is_active = ? 
+WHERE account_id = ?; [42122-200]
+2021-12-01 16:57:16 ERROR ClientDaoImpl:160 - org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "ACCOUNT_TRANSFER" not found; SQL statement:
+UPDATE accounts 
+SET client_id = ?,
+	account_category = ?,
+	account_balance = ?,
+	account_deposit = ?,
+	account_withdraw = ?,
+	account_transfer = ?,
+	account_is_active = ? 
+WHERE account_id = ?; [42122-200]

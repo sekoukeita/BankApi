@@ -117,7 +117,7 @@ class ClientServiceTest {
 
         Client client = clients.get(0);
 
-        Mockito.when(clientService.getClients()).thenReturn(clients);
+        Mockito.when(clientDao.getClients()).thenReturn(clients);
 
         //Act
         Boolean actualResult = clientService.updateClient(client.getClientId(), client.getClientName());

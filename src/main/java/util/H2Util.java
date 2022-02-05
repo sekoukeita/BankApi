@@ -12,6 +12,9 @@ public class H2Util {
     public static String username = "sa";
     public static String password = "sa";
 
+    // no constructor because the class variables and method will be called on a class scope
+
+    // Methods
     public static void createTable(){
         try(Connection conn = DriverManager.getConnection(url, username, password);){
             String sql = "CREATE TABLE clients(\n" +

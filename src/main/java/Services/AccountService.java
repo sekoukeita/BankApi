@@ -94,21 +94,19 @@ public class AccountService {
     }
 
     public Boolean updateAccountBalanceByWithdraw(Integer clientId, Integer accountId, Double withdraw){
-        /*if (!getAccountIdsList().contains(accountId) ||
+        /*if ( !getAccountIdsList().contains(accountId) ||
                 !(getClientAccount(clientId, accountId).getBalance() < withdraw)){
             return false;
         }
         else{ // client id in listIds and account id in accountIds and balance >= withdraw
-            accountDao.updateAccountBalanceByWithdraw(clientId, accountId, withdraw);
-            return true;
-        }*/
+            accountDao.updateAccountBalanceByWithdraw(clientId, accountId, withdraw);*/
         accountDao.updateAccountBalanceByWithdraw(clientId, accountId, withdraw);
         return true;
 
     }
 
-    public Boolean updateAccountsBalanceByTransfer(Integer clientId, Integer accountFromId, Integer accountToId, Double transferAmount){
-        if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountFromId) ||
+    public Boolean updateAccountsBalanceByTransfer(Integer clientId, Integer accountFromId, Integer accountToId, Double transferAmount) {
+        /*if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountFromId) ||
                 !getAccountIdsList().contains(accountToId) ||
                 !(getClientAccount(clientId, accountFromId).getBalance() < transferAmount) ) {
             return false;
@@ -116,7 +114,10 @@ public class AccountService {
         else{
             accountDao.updateAccountsBalanceByTransfer(clientId, accountFromId, accountToId, transferAmount);
             return true;
-        }
+        }*/
+        accountDao.updateAccountsBalanceByTransfer(clientId, accountFromId, accountToId, transferAmount);
+        return true;
+
     }
 
     public Boolean deleteAccount(Integer clientId, Integer accountId){

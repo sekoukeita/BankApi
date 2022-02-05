@@ -35,8 +35,8 @@ public class Main {
         //cs.deleteClient(9);
 
                   //AccountService Test
-        //AccountDao ad = new AccountDaoImpl();
-        //AccountService as = new AccountService();
+        AccountDao ad = new AccountDaoImpl();
+        AccountService as = new AccountService();
        AccountController ac = new AccountController();
            // List<Account> accounts = as.getClientAccounts(2);
         //System.out.println(accounts);
@@ -50,14 +50,14 @@ public class Main {
         /*List<Account> accounts = as.getClientAmountSelectedAccounts(2,2000.0,3000.0);
         System.out.println(accounts);*/
 
-        /*Account account = as.getClientAccount(2,5);
-        System.out.println(account);*/
+
+        //System.out.println(b);
 
         //as.createAccount(1);
 
         //ac.updateAccountBalanceByWithdraw(1,7,500.0);
 
-
+       //Boolean b = as.updateAccountsBalanceByTransfer(1,2,1, 500.0);
        //as.updateAccountCategory(1,1,"Checking");
 
        // as.updateAccountBalanceByWithdraw(5,6,500.5);

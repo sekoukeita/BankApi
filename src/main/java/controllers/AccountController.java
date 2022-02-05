@@ -151,7 +151,7 @@ public class AccountController {
                             accountService.getClientAccount(clientId, accountId).getBalance());
                 }
                 else{
-                    accountService.updateAccountBalanceByWithdraw(clientId, accountId, account.getDeposit() );
+                    accountService.updateAccountBalanceByWithdraw(clientId, accountId, account.getWithdraw());
                     ctx.result("The account with id " + accountId + " for the client with id " + clientId +
                             " balance has been successfully decreased by $" + account.getWithdraw());
                 }
