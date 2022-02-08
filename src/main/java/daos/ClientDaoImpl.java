@@ -17,6 +17,7 @@ public class ClientDaoImpl implements ClientDao{
     // create the logger object to log events in the file project_0.log
     Logger logger = Logger.getLogger(ClientDaoImpl.class);
 
+
                  // CONSTRUCTORS
     public ClientDaoImpl() {
         this.url = "jdbc:postgresql://" + System.getenv("AWS_RDS_ENDPOINT") + "/bank_db";

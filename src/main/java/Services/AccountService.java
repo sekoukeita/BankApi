@@ -10,11 +10,11 @@ import java.util.List;
 
 public class AccountService {
 
-                // MEMBER VARIABLES
+    // MEMBER VARIABLES
     AccountDao accountDao; // References the AccountDao
     //ClientDao clientDao; // References the ClientDao
 
-                // CONSTRUCTORS
+    // CONSTRUCTORS
     public AccountService() {
         this.accountDao = new AccountDaoImpl();
     }
@@ -31,108 +31,167 @@ public class AccountService {
 
     // MEMBERS METHODS TO DEFINE THE BUSINESS LOGIC
 
-    ClientService clientService = new ClientService(); // create the object clientController to call the helper method.
+    ClientService clientService = new ClientService(); // create the object clientService to call the helper method.
 
-    public List<Account> getClientAccounts(Integer clientId){
-
-        if (!(getClientIdsListInAccount().contains(clientId))) {
+    public List<Account> getClientAccounts(Integer clientId) {
+        if (!clientService.getClientIdsList().contains(clientId) || !(getClientIdsListInAccount().contains(clientId))) {
+            if (!clientService.getClientIdsList().contains(clientId)) {
+                System.out.println("This client does not exist!");
+            }
+            else {
+                System.out.println("This client does not have any account!");
+            }
             return new ArrayList<Account>(); //empty list
-        }
-        else{ // if client id in listIds and not query parameters found
+        } else {
             return accountDao.getClientAccounts(clientId);
         }
     }
 
-    public List<Account> getClientAccounts(Integer clientId, Double minBalance, Double maxBalance){
-
-        if (!(getClientIdsListInAccount().contains(clientId))) {
+    public List<Account> getClientAccounts(Integer clientId, Double minBalance, Double maxBalance) {
+        if (!clientService.getClientIdsList().contains(clientId) || !(getClientIdsListInAccount().contains(clientId))) {
+            if (!clientService.getClientIdsList().contains(clientId)) {
+                System.out.println("This client does not exist!");
+            }
+            else {
+                System.out.println("This client does not have any account!");
+            }
             return new ArrayList<Account>(); //empty list
-        }
-        else{ // if client id in listIds and  query parameters found
+        } else { // if client id in listIds and  query parameters found
             return accountDao.getClientAccounts(clientId, minBalance, maxBalance);
         }
     }
 
-    public Account getClientAccount(Integer clientId, Integer accountId){
-        if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountId)){
+    public Account getClientAccount(Integer clientId, Integer accountId) {
+        if (!clientService.getClientIdsList().contains(clientId) || !(getClientIdsListInAccount().contains(clientId)) ||
+                !getClientAccountsIdsList(clientId).contains(accountId)) {
+            if (!clientService.getClientIdsList().contains(clientId)) {
+                System.out.println("This client does not exist!");
+            }
+            else if (!getClientIdsListInAccount().contains(clientId)) {
+                System.out.println("This client does not have any account!");
+            }
+            else {
+                System.out.println("There is no such account for this client!");
+            }
             return null;
-        }
-        else { // if client id in listIds and account id in list in accountIds
+        } else {
             return accountDao.getClientAccount(clientId, accountId);
         }
     }
 
-    public Boolean createAccount(Integer clientId){
+    public Boolean createAccount(Integer clientId) {
         if (clientService.getClientIdsList().contains(clientId)) { // if client id in listIds
             accountDao.createAccount(clientId);
+            System.out.println("Account successfully created!");
             return true;
         } else {
-           return false;
+            System.out.println("This client does not exist!. Account not created!");
+            return false;
         }
     }
 
     public Boolean updateAccount(Integer accountId, Integer clientId, String category,
-                              Double balance, Double deposit, Double withdraw, Double transfer, Boolean isActive){
+                                 Double balance, Double deposit, Double withdraw, Double transfer, Boolean isActive) {
 
-        if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountId)) {
+        if (!getAccountIdsList().contains(accountId)) {
+            System.out.println("This account does not exist!");
             return false;
-        }
-        else { // client id in listIds and account id in accountIds
+        } else {
             accountDao.updateAccount(accountId, clientId, category, balance, deposit, withdraw, transfer, isActive);
+            System.out.println("The account has been successfully updated!");
             return true;
         }
     }
 
-    public Boolean updateAccountBalanceByDeposit(Integer clientId, Integer accountId, Double deposit){
-        if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountId)){
+    public Boolean updateAccountBalanceByDeposit(Integer clientId, Integer accountId, Double deposit) {
+        if (!clientService.getClientIdsList().contains(clientId) || !(getClientIdsListInAccount().contains(clientId)) ||
+                !getClientAccountsIdsList(clientId).contains(accountId)) {
+            if (!clientService.getClientIdsList().contains(clientId)) {
+                System.out.println("This client does not exist!");
+            }
+            else if (!getClientIdsListInAccount().contains(clientId)) {
+                System.out.println("This client does not have any account!");
+            }
+            else {
+                System.out.println("There is no such account for this client!");
+            }
             return false;
-        }
-        else{ // client id in listIds and account id in accountIds
+        } else {
             accountDao.updateAccountBalanceByDeposit(clientId, accountId, deposit);
+            System.out.printf("The amount of %.2f has been deposited into the account", deposit);
             return true;
         }
     }
 
-    public Boolean updateAccountBalanceByWithdraw(Integer clientId, Integer accountId, Double withdraw){
-        /*if ( !getAccountIdsList().contains(accountId) ||
-                !(getClientAccount(clientId, accountId).getBalance() < withdraw)){
+    public Boolean updateAccountBalanceByWithdraw(Integer clientId, Integer accountId, Double withdraw) {
+
+        if (!clientService.getClientIdsList().contains(clientId) || !(getClientIdsListInAccount().contains(clientId)) ||
+                !getClientAccountsIdsList(clientId).contains(accountId)) {
+            if (!clientService.getClientIdsList().contains(clientId)) {
+                System.out.println("This client does not exist!");
+            }
+            else if (!getClientIdsListInAccount().contains(clientId)) {
+                System.out.println("This client does not have any account!");
+            }
+            else {
+                System.out.println("There is no such account for this client!");
+            }
             return false;
+        } else {
+            accountDao.updateAccountBalanceByWithdraw(clientId, accountId, withdraw);
+            System.out.printf("The amount of %.2f has been withdrawn from the account", withdraw);
+            return true;
         }
-        else{ // client id in listIds and account id in accountIds and balance >= withdraw
-            accountDao.updateAccountBalanceByWithdraw(clientId, accountId, withdraw);*/
-        accountDao.updateAccountBalanceByWithdraw(clientId, accountId, withdraw);
-        return true;
 
     }
 
     public Boolean updateAccountsBalanceByTransfer(Integer clientId, Integer accountFromId, Integer accountToId, Double transferAmount) {
-        /*if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountFromId) ||
-                !getAccountIdsList().contains(accountToId) ||
-                !(getClientAccount(clientId, accountFromId).getBalance() < transferAmount) ) {
+        if (!clientService.getClientIdsList().contains(clientId) || !(getClientIdsListInAccount().contains(clientId)) ||
+                !getClientAccountsIdsList(clientId).contains(accountFromId) || !getClientAccountsIdsList(clientId).contains(accountToId)) {
+            if (!clientService.getClientIdsList().contains(clientId)) {
+                System.out.println("This client does not exist!");
+            }else if (!getClientIdsListInAccount().contains(clientId)) {
+                System.out.println("This client does not have any account!");
+            }
+            else if (!getClientAccountsIdsList(clientId).contains(accountFromId)) {
+                System.out.println("The account 'From' does not belong to the client");
+            }
+            else {
+                System.out.println("The account 'To' does not belong to the client");
+            }
             return false;
-        }
-        else{
+        } else {
             accountDao.updateAccountsBalanceByTransfer(clientId, accountFromId, accountToId, transferAmount);
+            System.out.printf("The amount of %s has been transferred  from the account %s to the account %s",
+                    transferAmount, accountFromId, accountToId);
             return true;
-        }*/
-        accountDao.updateAccountsBalanceByTransfer(clientId, accountFromId, accountToId, transferAmount);
-        return true;
-
+        }
     }
 
-    public Boolean deleteAccount(Integer clientId, Integer accountId){
-        if (!getClientIdsListInAccount().contains(clientId) || !getAccountIdsList().contains(accountId)){
+    public Boolean deleteAccount(Integer clientId, Integer accountId) {
+        if (!clientService.getClientIdsList().contains(clientId) || !(getClientIdsListInAccount().contains(clientId)) ||
+                !getClientAccountsIdsList(clientId).contains(accountId)) {
+            if (!clientService.getClientIdsList().contains(clientId)) {
+                System.out.println("This client does not exist!");
+            }
+            else if (!getClientIdsListInAccount().contains(clientId)) {
+                System.out.println("This client does not have any account!");
+            }
+            else {
+                System.out.println("There is no such account for this client!");
+            }
             return false;
-        }
-        else { // if client id in listIds and account id in list in accountIds
+        } else { // if client id in listIds and account id in list in accountIds
             accountDao.deleteAccount(clientId, accountId);
+            System.out.println("The account has been successfully deleted!");
             return true;
         }
     }
+
 
                         // HELPER METHODS
 
-    // Returns the list of accountIds for the client.
+    // Returns the list of all accountIds.
     public List<Integer> getAccountIdsList(){
         List<Account> accounts = getAccounts(); // get the list of all accounts.
         List<Integer> accountIds = new ArrayList<>(); // create an empty ArrayList of ids.
@@ -143,6 +202,7 @@ public class AccountService {
         return accountIds;
     }
 
+    // Returns the list of all clientIds
     public List<Integer> getClientIdsListInAccount(){
         List<Account> accounts = getAccounts(); // get the list of all accounts.
         List<Integer> clientIdsInAccount = new ArrayList<>(); // create an empty ArrayList of ids.
@@ -151,6 +211,18 @@ public class AccountService {
             clientIdsInAccount.add(account.getClientId()); // loop through accounts' list and add each client id to the ids' list.
         }
         return clientIdsInAccount;
+    }
+
+    // Returns the list of the AccountIds for the client
+    public List<Integer> getClientAccountsIdsList(Integer clientId){
+        List<Account> accounts = getAccounts();
+        List<Integer> clientAccountsIdsList = new ArrayList<>();
+        for(Account account : accounts){
+            if (account.getClientId().equals(clientId)) {
+                clientAccountsIdsList.add(account.getAccountId());
+            }
+        }
+        return clientAccountsIdsList;
     }
 
 

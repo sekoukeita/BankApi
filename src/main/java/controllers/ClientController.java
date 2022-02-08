@@ -44,7 +44,7 @@ public class ClientController {
 
     // GET /clients/10 => get client with id of 10 return 404 if no such client exist
     public void getClient(Context ctx) {
-        Integer clientId = Integer.parseInt(ctx.pathParam("cId")); // get the id to from the path parameter entered into the url
+        Integer clientId = Integer.parseInt(ctx.pathParam("cId")); // get the id from the path parameter entered into the url
 
         if(clientService.getClientIdsList().contains(clientId)){
             ctx.json(clientService.getClient(clientId)); //if the clientId is inside the ids list, get the client.
@@ -60,13 +60,17 @@ public class ClientController {
         Client client = ctx.bodyAsClass(Client.class); // get the client new name from the json in the body
         Integer clientId = Integer.parseInt(ctx.pathParam("cId")); // get the client id from the path parameter
 
-        if(clientService.getClientIdsList().contains(clientId)){
-            clientService.updateClient(clientId, client.getClientName()); //if the clientId is inside the ids list, update the client name.
-            ctx.result("The name of the client with id " + clientId + " has been successfully updated to: " + client.getClientName());
+        if (client.getClientName().length() > 20){
+            ctx.status(404); //return the status code 404
+            ctx.result("The client name should not be longer than 20 characters!");
+        }
+        else if (!clientService.getClientIdsList().contains(clientId)){
+            ctx.status(404);
+            ctx.result("The client with id " + clientId + " does not exist in the database!");
         }
         else{
-            ctx.status(404); // else return the status code 404
-            ctx.result("The client with id " + clientId + " does not exist in the database!");
+            clientService.updateClient(clientId, client.getClientName()); //if the clientId is inside the ids list, update the client name.
+            ctx.result("The name of the client with id " + clientId + " has been successfully updated to: " + client.getClientName());
         }
     }
 

@@ -21,7 +21,7 @@ public class AccountController {
 
     //HANDLER IMPLEMENTATIONS
 
-    ClientService clientService = new ClientService(); // create the object clientController to call the helper method.
+    ClientService clientService = new ClientService(); // create the object clientService to call the helper method.
 
     // POST /clients/5/accounts =>creates a new account for client with the id of 5 return a 201 status code
     public void createAccount(Context ctx) {
@@ -33,7 +33,7 @@ public class AccountController {
             ctx.result("An account has been successfully created for the client with id " + clientId + " in the database!");
         } else {
             ctx.status(404);
-            ctx.result("The client with id " + clientId + " does not exist in the database. He needs to be created before creating an account for him.");
+            ctx.result("The client with id " + clientId + " does not exist in the database. They need to be created before creating an account for them.");
         }
     }
 
@@ -48,7 +48,7 @@ public class AccountController {
         if (!(clientService.getClientIdsList().contains(clientId))) {
             ctx.status(404);
             ctx.result("The client with id " + clientId + " does not exists in the database.");
-            return;
+            return; // using the return key word, it is not needed to use nested if (else if).
         }
         if (!(accountService.getClientIdsListInAccount().contains(clientId))) {
             ctx.status(404);
@@ -77,7 +77,11 @@ public class AccountController {
         if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
-        } else if (!accountService.getAccountIdsList().contains(accountId)) {
+        } else if (!accountService.getClientIdsListInAccount().contains(clientId)) {
+            ctx.status(404);
+            ctx.result("The client with " + clientId + " does not have any account at all!");
+        }
+        else if (!accountService.getClientAccountsIdsList(clientId).contains(accountId)){
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not have any account with id " + accountId);
         }
@@ -88,14 +92,14 @@ public class AccountController {
 
     // PUT /clients/10/accounts/3 => update account with the id 3 for client 10 return 404 if no account or client exists
     public void updateAccount(Context ctx){
-        Account account = ctx.bodyAsClass(Account.class); // get the all account variables (except accountId and ClientId) form the url body
+        Account account = ctx.bodyAsClass(Account.class); // get all account variables (except accountId and ClientId) form the url body
         Integer clientId = Integer.parseInt(ctx.pathParam("cId")); // get the client id from the path parameter
         Integer accountId = Integer.parseInt(ctx.pathParam("aId")); // get the account id from the path parameter
 
         if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
-        } else if (!accountService.getAccountIdsList().contains(accountId)) {
+        } else if (!accountService.getClientAccountsIdsList(clientId).contains(accountId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not have any account with id " + accountId);
         }
@@ -114,7 +118,7 @@ public class AccountController {
         if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not exist in the database.");
-        } else if (!accountService.getAccountIdsList().contains(accountId)) {
+        } else if (!accountService.getClientAccountsIdsList(clientId).contains(accountId)) {
             ctx.status(404);
             ctx.result("The client with " + clientId + " does not have any account with id " + accountId);
         }
@@ -133,16 +137,17 @@ public class AccountController {
 
         if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
-            ctx.result("The client with " + clientId + " does not exist in the database.");
-        } else if (!accountService.getAccountIdsList().contains(accountId)) {
+            ctx.result("The client with id" + clientId + " does not exist in the database.");
+        } else if (!accountService.getClientAccountsIdsList(clientId).contains(accountId)) {
             ctx.status(404);
-            ctx.result("The client with " + clientId + " does not have any account with id " + accountId);
+            ctx.result("The client with id" + clientId + " does not have any account with id " + accountId);
         }
         else {
             if(account.getDeposit() != null){
                 accountService.updateAccountBalanceByDeposit(clientId, accountId, account.getDeposit());
-                ctx.result("The account with id " + accountId + " for the client with id " + clientId +
-                        " balance has been successfully increased by $" + account.getDeposit());
+                ctx.result("The balance of the account with id " + accountId + " for the client with id " + clientId +
+                        " has been successfully increased by $" + account.getDeposit());
+                return;
             }
             if(account.getWithdraw() != null){
                 if(accountService.getClientAccount(clientId, accountId).getBalance() < account.getWithdraw()){
@@ -152,15 +157,15 @@ public class AccountController {
                 }
                 else{
                     accountService.updateAccountBalanceByWithdraw(clientId, accountId, account.getWithdraw());
-                    ctx.result("The account with id " + accountId + " for the client with id " + clientId +
-                            " balance has been successfully decreased by $" + account.getWithdraw());
+                    ctx.result("The balance of the account with id " + accountId + " for the client with id " + clientId +
+                            " has been successfully decreased by $" + account.getWithdraw());
                 }
             }
         }
     }
 
     // PATCH /clients/12/accounts/7/transfer/8 => transfer funds from account 7 to account 8
-    // (Body: {"amount":500}) return 404 if no client or either account exists return 422 if insufficient funds
+    // (Body: {"transfer":500}) return 404 if no client or either account exists return 422 if insufficient funds
     public void updateAccountsByTransfer(Context ctx){
         Account account = ctx.bodyAsClass(Account.class); // get the transfer amount from the url body.
         Integer clientId = Integer.parseInt(ctx.pathParam("cId")); // get the client id from the path parameter
@@ -169,21 +174,27 @@ public class AccountController {
 
         if (!clientService.getClientIdsList().contains(clientId)) {
             ctx.status(404);
-            ctx.result("The client with " + clientId + " does not exist in the database.");
-        } else if (!accountService.getAccountIdsList().contains(accountFromId)) {
+            ctx.result("The client with id " + clientId + " does not exist in the database.");
+        }
+        else if (!accountService.getClientIdsListInAccount().contains(clientId)) {
             ctx.status(404);
-            ctx.result("The client with " + clientId + " does not have any account with id " + accountFromId);
-        } else if(!accountService.getAccountIdsList().contains(accountToId)){
+            ctx.result("The client with id " + clientId + " does not have any account at all!");
+        }
+        else if (!accountService.getClientAccountsIdsList(clientId).contains(accountFromId)) {
             ctx.status(404);
-            ctx.result("The client with " + clientId + " does not have any account with id " + accountToId);
+            ctx.result("The client with id " + clientId + " does not have any account with id " + accountFromId);
+        } else if(!accountService.getClientAccountsIdsList(clientId).contains(accountToId)){
+            ctx.status(404);
+            ctx.result("The client with id " + clientId + " does not have any account with id " + accountToId);
         }else if(accountService.getClientAccount(clientId, accountFromId).getBalance() < account.getTransfer()){
             ctx.status(422);
             ctx.result("Insufficient funds: \nThe account with id " + accountFromId + " balance is only $" +
                     accountService.getClientAccount(clientId, accountFromId).getBalance());
         }
         else{
-            accountService.updateAccountBalanceByWithdraw(clientId, accountFromId, account.getTransfer());
-            accountService.updateAccountBalanceByDeposit(clientId, accountToId, account.getTransfer());
+            accountService.updateAccountsBalanceByTransfer(clientId,accountFromId, accountToId, account.getTransfer());
+            /*accountService.updateAccountBalanceByWithdraw(clientId, accountFromId, account.getTransfer());
+            accountService.updateAccountBalanceByDeposit(clientId, accountToId, account.getTransfer());*/
             ctx.result("The amount of $" + account.getTransfer() + " has been successfully transferred from the account with id " +
                     accountFromId + " to the account with id " + accountToId);
         }

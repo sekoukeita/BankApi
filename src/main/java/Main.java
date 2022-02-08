@@ -1,8 +1,12 @@
 import Services.AccountService;
+import Services.ClientService;
 import controllers.AccountController;
 import daos.AccountDao;
 import daos.AccountDaoImpl;
+import daos.ClientDao;
+import daos.ClientDaoImpl;
 import models.Account;
+import models.Client;
 import util.H2Util;
 
 import java.util.List;
@@ -11,10 +15,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //ClientDao clientDao = new ClientDaoImpl();
-       // AccountDao accountDao = new AccountDaoImpl();
+        /*ClientDao clientDao = new ClientDaoImpl();
+        AccountDao accountDao = new AccountDaoImpl();
+        Account account = accountDao.getClientAccount(1, 1);
 
-        //Account account = accountDao.getClientAccount(1, 1);
+        System.out.println(account);*/
 
         //accountDao.createAccount(1);
         //accountDao.updateAccount(6, 5, "Checking", 500.50, 0.0, 0.0, 0.0, true);
@@ -35,9 +40,9 @@ public class Main {
         //cs.deleteClient(9);
 
                   //AccountService Test
-        AccountDao ad = new AccountDaoImpl();
+        /*AccountDao ad = new AccountDaoImpl();
         AccountService as = new AccountService();
-       AccountController ac = new AccountController();
+       AccountController ac = new AccountController();*/
            // List<Account> accounts = as.getClientAccounts(2);
         //System.out.println(accounts);
 
@@ -75,6 +80,14 @@ public class Main {
 
         //H2Util.createTable();
         //H2Util.dropTable();
+
+        AccountService as = new AccountService();
+        as.updateAccountsBalanceByTransfer(1,10,2,300.0);
+
+
+
+
+
 
 
 
