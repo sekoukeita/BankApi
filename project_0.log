@@ -66,3 +66,7 @@ SET client_id = ?,
 	account_transfer = ?,
 	account_is_active = ? 
 WHERE account_id = ?; [42122-200]
+2022-02-09 13:53:52 ERROR ClientDaoImpl:48 - org.postgresql.util.PSQLException: The connection attempt failed.
+2022-02-09 13:53:52 ERROR ClientDaoImpl:48 - org.postgresql.util.PSQLException: The connection attempt failed.
+2022-02-10 09:11:56 ERROR ClientDaoImpl:48 - org.postgresql.util.PSQLException: The connection attempt failed.
+2022-02-10 09:11:56 ERROR ClientDaoImpl:48 - org.postgresql.util.PSQLException: The connection attempt failed.

@@ -16,7 +16,6 @@ class ClientServiceTest {
            // MEMBER VARIABLES
     ClientDao clientDao = Mockito.mock(ClientDao.class);
     ClientService clientService;
-
           // CONSTRUCTORS
     public ClientServiceTest() {
         this.clientService = new ClientService(clientDao);
@@ -29,6 +28,7 @@ class ClientServiceTest {
         expectedResult.add(new Client(1, "Alpha"));
         expectedResult.add(new Client(2, "Beta"));
         expectedResult.add(new Client(3, "Omega"));
+
         // The clientDaoImpl is not actually hit. Mockito returns the expected result, and we use that to test the service.
         Mockito.when(clientDao.getClients()).thenReturn(expectedResult);
 
@@ -49,8 +49,11 @@ class ClientServiceTest {
 
         Client expectedResult = clients.get(0);
 
-        //Since clientDao object is mocked and clientService references this dao object, clientService can also be mocked.
-        Mockito.when(clientService.getClients()).thenReturn(clients);
+        /*
+        * The method "getClientIdList()" involved in the method needs the results of the method "getClients()" of the clientService
+        * Since the dao is mocked, we need to return the desired values of "getClients()" to the method.
+        * */
+        Mockito.when(clientDao.getClients()).thenReturn(clients);
         Mockito.when(clientDao.getClient(expectedResult.getClientId())).thenReturn(expectedResult);
 
         //Act
@@ -69,10 +72,9 @@ class ClientServiceTest {
         clients.add(new Client(3, "Omega"));
 
         // client with id out of the list of ids
-        Client client = new Client(1, "Delta");
+        Client client = new Client(4, "Delta");
 
-        Mockito.when(clientService.getClients()).thenReturn(clients);
-        //Mockito.when(clientDao.getClient(client.getClientId())).thenReturn(client);
+        Mockito.when(clientDao.getClients()).thenReturn(clients);
 
         //Act
         Client actualResult = clientService.getClient(client.getClientId());
@@ -97,6 +99,7 @@ class ClientServiceTest {
     @Test
     void createClientReturnFalse() {
         // Arrange
+            // Client name with more than 20 characters
         Client client = new Client(1, "Alpha Blondy is from Ivory Coast");
 
         //Act
@@ -120,7 +123,8 @@ class ClientServiceTest {
         Mockito.when(clientDao.getClients()).thenReturn(clients);
 
         //Act
-        Boolean actualResult = clientService.updateClient(client.getClientId(), client.getClientName());
+            // client name with less than 20 characters
+        Boolean actualResult = clientService.updateClient(client.getClientId(), "Tiken");
 
         //assert
         assertTrue(actualResult);
@@ -137,7 +141,7 @@ class ClientServiceTest {
         // Either the client id is not in the listIds or the length of the client name is over 20 or both.
         Client client = clients.get(0);
 
-        Mockito.when(clientService.getClients()).thenReturn(clients);
+        Mockito.when(clientDao.getClients()).thenReturn(clients);
 
         //Act
         Boolean actualResult = clientService.updateClient(client.getClientId(), client.getClientName());
@@ -156,7 +160,7 @@ class ClientServiceTest {
 
         Client client = clients.get(0);
 
-        Mockito.when(clientService.getClients()).thenReturn(clients);
+        Mockito.when(clientDao.getClients()).thenReturn(clients);
 
         //Act
         Boolean actualResult = clientService.deleteClient(client.getClientId());
@@ -175,7 +179,7 @@ class ClientServiceTest {
 
         Client client = new Client(5, "Delta");
 
-        Mockito.when(clientService.getClients()).thenReturn(clients);
+        Mockito.when(clientDao.getClients()).thenReturn(clients);
 
         //Act
         Boolean actualResult = clientService.deleteClient(client.getClientId());

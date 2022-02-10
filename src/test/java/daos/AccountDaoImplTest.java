@@ -114,7 +114,7 @@ class AccountDaoImplTest {
     }
 
     @Test
-    void testGetClientAccountsIT() {
+    void getClientAccounts3ArgumentsIT() {
         //Arrange
         //List of clients
         List<Client> clients = new ArrayList<>();
@@ -132,6 +132,11 @@ class AccountDaoImplTest {
         accounts.add(new Account(4, 2, "Checking", 0.0,
                 0.0, 0.0, 0.0, true));
 
+        // List of account for the client with id = 1 with balance > 100 and  balance < 300
+        List<Account> expectedResult = new ArrayList<>();
+        expectedResult.add(new Account(2, 1, "Checking", 200.0,
+                200.0, 0.0, 0.0, true));
+
         // Populate tables  with the  clients and accounts
         clientDao.createClient(clients.get(0));
         clientDao.createClient(clients.get(1));
@@ -141,18 +146,13 @@ class AccountDaoImplTest {
         accountDao.createAccount(accounts.get(2).getClientId());
         accountDao.createAccount(accounts.get(3).getClientId());
 
-        // Act
+        // update the balances of client's 1 accounts
         accountDao.updateAccountBalanceByDeposit(accounts.get(0).getClientId(), accounts.get(0).getAccountId(), 100.0);
         accountDao.updateAccountBalanceByDeposit(accounts.get(1).getClientId(), accounts.get(1).getAccountId(), 200.0);
         accountDao.updateAccountBalanceByDeposit(accounts.get(2).getClientId(), accounts.get(2).getAccountId(), 300.0);
 
-        List<Account> expectedResult = new ArrayList<>();
-        expectedResult.add(new Account(1, 1, "Checking", 100.0,
-                100.0, 0.0, 0.0, true));
-        expectedResult.add(new Account(2, 1, "Checking", 200.0,
-                200.0, 0.0, 0.0, true));
-
-        List<Account> actualResult = accountDao.getClientAccounts(accounts.get(0).getClientId(), 50.0, 250.0);
+        // Act
+        List<Account> actualResult = accountDao.getClientAccounts(accounts.get(0).getClientId(), 100.0, 300.0);
 
         //Assert
         assertEquals(expectedResult.toString(), actualResult.toString());
@@ -252,8 +252,8 @@ class AccountDaoImplTest {
         accounts.add(new Account(4, 2, "Checking", 0.0,
                 0.0, 0.0, 0.0, true));
 
-        Account expectedResult = new Account(1, 1, "Saving", 100.0,
-                0.0, 0.0, 0.0, false);
+        Account expectedResult = new Account(1, 1, "Saving", 500.0,
+                3000.0, 200.0, 100.0, false);
 
         // Populate tables  with the  clients and accounts
         clientDao.createClient(clients.get(0));
@@ -265,12 +265,11 @@ class AccountDaoImplTest {
         accountDao.createAccount(accounts.get(3).getClientId());
 
         // Act
-        /*accountDao.updateAccount(accounts.get(0).getAccountId(),accounts.get(0).getClientId(),
-                accounts.get(0).getCategory(),accounts.get(0).getBalance(),accounts.get(0).getDeposit(),
-                accounts.get(0).getWithdraw(),accounts.get(0).getTransfer(),accounts.get(0).getAccount_is_Active());*/
-        accountDao.updateAccount(1,1,
-                "saving",100.0,0.0,
-                0.0,0.0,false);
+
+        // update the account 1 for the client 1 to match the expected result
+        accountDao.updateAccount(expectedResult.getClientId(), expectedResult.getAccountId(), expectedResult.getCategory(),
+                expectedResult.getBalance(), expectedResult.getDeposit(), expectedResult.getWithdraw(), expectedResult.getTransfer(),
+                expectedResult.getAccount_is_Active());
         Account actualResult = accountDao.getClientAccount(expectedResult.getClientId(), expectedResult.getAccountId());
 
         //Assert
@@ -278,26 +277,39 @@ class AccountDaoImplTest {
     }
 
     @Test
-    void updateAccountCategoryIT() {
-    }
-
-    @Test
-    void updateAccountBalanceByDepositIT() {
-    }
-
-    @Test
-    void updateAccountBalanceByWithdrawIT() {
-    }
-
-    @Test
-    void updateAccountStatusIT() {
-    }
-
-    @Test
-    void updateAccountsBalanceByTransferIT() {
-    }
-
-    @Test
     void deleteAccountIT() {
+        //Arrange
+        //List of clients
+        List<Client> clients = new ArrayList<>();
+        clients.add(new Client(1, "Alpha"));
+        clients.add(new Client(2, "Beta"));
+
+        // List of  accounts
+        List<Account> accounts = new ArrayList<>();
+        accounts.add(new Account(1, 1, "Checking", 0.0,
+                0.0, 0.0, 0.0, true));
+        accounts.add(new Account(2, 1, "Checking", 0.0,
+                0.0, 0.0, 0.0, true));
+        accounts.add(new Account(3, 1, "Checking", 0.0,
+                0.0, 0.0, 0.0, true));
+        accounts.add(new Account(4, 2, "Checking", 0.0,
+                0.0, 0.0, 0.0, true));
+
+
+        // Populate tables  with the  clients and accounts
+        clientDao.createClient(clients.get(0));
+        clientDao.createClient(clients.get(1));
+
+        accountDao.createAccount(accounts.get(0).getClientId());
+        accountDao.createAccount(accounts.get(1).getClientId());
+        accountDao.createAccount(accounts.get(2).getClientId());
+        accountDao.createAccount(accounts.get(3).getClientId());
+
+        // Act
+        accountDao.deleteAccount(accounts.get(0).getClientId(), accounts.get(0).getAccountId());
+        Account actualResult = accountDao.getClientAccount(accounts.get(0).getClientId(), accounts.get(0).getAccountId());
+
+        //Assert
+        assertNull(actualResult);
     }
 }

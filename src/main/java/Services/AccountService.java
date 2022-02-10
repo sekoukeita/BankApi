@@ -12,7 +12,7 @@ public class AccountService {
 
     // MEMBER VARIABLES
     AccountDao accountDao; // References the AccountDao
-    //ClientDao clientDao; // References the ClientDao
+    ClientDao clientDao;
 
     // CONSTRUCTORS
     public AccountService() {
@@ -23,18 +23,12 @@ public class AccountService {
         this.accountDao = accountDao;
     }
 
-    /*        // added to use in unit testing
-    public AccountService(ClientDao clientDao) {
-        this.clientDao = clientDao;
-
-    }*/
-
     // MEMBERS METHODS TO DEFINE THE BUSINESS LOGIC
 
     ClientService clientService = new ClientService(); // create the object clientService to call the helper method.
 
     public List<Account> getClientAccounts(Integer clientId) {
-        if (!clientService.getClientIdsList().contains(clientId) || !(getClientIdsListInAccount().contains(clientId))) {
+        if (!clientService.getClientIdsList().contains(clientId) || !getClientIdsListInAccount().contains(clientId)) {
             if (!clientService.getClientIdsList().contains(clientId)) {
                 System.out.println("This client does not exist!");
             }
@@ -45,6 +39,7 @@ public class AccountService {
         } else {
             return accountDao.getClientAccounts(clientId);
         }
+
     }
 
     public List<Account> getClientAccounts(Integer clientId, Double minBalance, Double maxBalance) {

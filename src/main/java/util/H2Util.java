@@ -1,5 +1,9 @@
 package util;
 
+
+
+import org.apache.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,6 +17,8 @@ public class H2Util {
     public static String password = "sa";
 
     // no constructor because the class variables and method will be called on a class scope
+
+    static Logger logger = Logger.getLogger(H2Util.class);
 
     // Methods
     public static void createTable(){
@@ -28,15 +34,16 @@ public class H2Util {
                     "\taccount_balance double PRECISION NOT NULL DEFAULT 0,\n" +
                     "\taccount_deposit double PRECISION NOT NULL DEFAULT 0,\n" +
                     "\taccount_withdraw double PRECISION NOT NULL DEFAULT 0,\n" +
-                    "\taccount_transfert double PRECISION NOT NULL DEFAULT 0,\n" +
-                    "\taccount_isactive boolean NOT NULL DEFAULT TRUE,\n" +
+                    "\taccount_transfer double PRECISION NOT NULL DEFAULT 0,\n" +
+                    "\taccount_is_active boolean NOT NULL DEFAULT TRUE,\n" +
                     "\tFOREIGN KEY(client_id) REFERENCES clients(client_id)\n" +
                     ");";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
+            //e.printStackTrace();
         }
     }
 
@@ -48,7 +55,8 @@ public class H2Util {
             ps.executeUpdate();
         }
         catch(SQLException e){
-            e.printStackTrace();
+            logger.error(e);
+            //e.printStackTrace();
         }
     }
 

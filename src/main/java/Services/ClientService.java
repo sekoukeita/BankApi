@@ -31,6 +31,7 @@ public class ClientService {
             return clientDao.getClient(clientId);
         }
         else{
+            System.out.println("The client does not exist!");
             return null;
         }
     }
